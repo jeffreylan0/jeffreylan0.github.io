@@ -2,7 +2,7 @@ body {
    background-color: #DBDBD0;
 }
 
-p {
+a {
    font-family: 'Average Sans', sans-serif;
 }
 
@@ -35,8 +35,9 @@ p {
 
 .menutext {
    text-align: center;
-   margin-top: 1rem;
    font-size: 1rem;
+   padding: 1.1rem;
+   text-decoration: none;
    display: block;
 }
 
@@ -57,7 +58,7 @@ p {
 }
 
 .menuelement:hover {
-   filter: brightness(80%) !important;
+   filter: brightness(70%) !important;
 }
 
 .introheaders {
