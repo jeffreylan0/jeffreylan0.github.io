@@ -1,0 +1,66 @@
+body {
+   background-color: #DBDBD0;
+}
+
+a {
+   font-family: 'Average Sans', sans-serif;
+}
+
+#menucontainer {
+   margin: 10px;
+}
+
+#expansionArrow {
+   text-align: center;
+   display: block;
+   margin-top: 1.25rem;
+   margin-bottom: 1rem;
+}
+
+#arrowmenuelement {
+   margin: 0;
+   transform-origin: center;
+}
+
+#themebtn {
+   text-align: center;
+   display: block;
+   margin-top: 1.2rem;
+   margin-bottom: 1rem;
+}
+
+#arrowmenuelement:hover {
+   filter: brightness(80%);
+}
+
+.menutext {
+   text-align: center;
+   font-size: 1rem;
+   padding: 1.1rem;
+   text-decoration: none;
+   display: block;
+}
+
+.prim {
+   background-color: #f5424b;
+}
+
+.sec {
+   background-color: #6797cf;
+}
+
+#tert {
+   background-color: #5c5a58;
+}
+
+.menuelement {
+   display: none;
+}
+
+.menuelement:hover {
+   filter: brightness(70%) !important;
+}
+
+.introheaders {
+   text-align: center;
+}
