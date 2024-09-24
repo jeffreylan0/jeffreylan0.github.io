@@ -36,10 +36,8 @@ a {
 .menutext {
    text-align: center;
    font-size: 1rem;
-   padding-left: 1.5rem;
-   padding-right: 1.5rem;
+   padding: 1rem;
    text-decoration: none;
-   display: block;
 }
 
 .prim {
