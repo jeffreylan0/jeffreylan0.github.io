@@ -1,14 +1,14 @@
 /**
  * File: /js/canvas.js
  * Description: A robust module for managing the Fabric.js canvas.
- * This version triggers the controls animation on the first mouse-down event.
+ * This version corrects the logic to ensure the controls appear on the first stroke.
  */
 
 // Module-level variables
 let canvas;
 let history = [];
 let historyIndex = -1;
-let isFirstStroke = true; // Flag to track if the user has started drawing yet
+let hasUserDrawn = false; // A more reliable flag for the first stroke.
 
 // DOM element references
 const undoBtn = document.getElementById('undo');
@@ -67,10 +67,10 @@ export function initCanvas() {
 
     // This event fires as soon as the user presses their mouse/finger down.
     canvas.on('mouse:down', () => {
-        // If it's the very first stroke, show the controls.
-        if (isFirstStroke) {
+        // If the user has not drawn yet, show the controls.
+        if (!hasUserDrawn) {
             controlsContainer.classList.add('visible');
-            isFirstStroke = false; // Ensure this only happens once
+            hasUserDrawn = true; // Set the flag to true so this only runs once.
         }
     });
 
@@ -119,7 +119,7 @@ export function clearCanvas() {
     historyIndex = -1;
     saveState();
     
-    // Hide the controls and reset the first-stroke flag
+    // Hide the controls and reset the flag for the next session.
     controlsContainer.classList.remove('visible');
-    isFirstStroke = true;
+    hasUserDrawn = false;
 }
