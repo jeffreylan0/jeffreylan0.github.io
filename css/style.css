@@ -32,16 +32,25 @@ canvas {
     @apply bg-stone-100 p-2 rounded-lg; /* Off-white, padded, rounded corners */
     @apply border border-stone-200;
     
-    /* Animation: Start hidden and moved up, ready for pop-down */
+    /*
+     * FIX: Use `visibility: hidden` to completely remove the element from interaction when hidden.
+     * This prevents the "invisible bar" from blocking mouse/touch events.
+     * `opacity: 0` just makes it transparent, but it's still "there". `visibility: hidden` truly hides it.
+    */
+    visibility: hidden;
     opacity: 0;
-    transform: translateY(-150%) translateX(-50%); /* Move up and center */
-    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    transform: translateY(-150%) translateX(-50%);
+    /* The transition for visibility is delayed to happen only after the fade-out is complete. */
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0s linear 0.3s;
     pointer-events: none;
 }
 
 .control-bar.visible {
+    visibility: visible;
     opacity: 1;
-    transform: translateY(0) translateX(-50%); /* Animate to final position */
+    transform: translateY(0) translateX(-50%);
+    /* The transition for visibility is immediate when becoming visible. */
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
     pointer-events: auto;
 }
 
