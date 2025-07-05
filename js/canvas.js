@@ -1,44 +1,60 @@
 /**
  * File: /js/canvas.js
- * Description: Manages all logic for the Fabric.js canvas, including
- * drawing, history (undo/redo), and data extraction.
+ * Description: Manages all logic for the Fabric.js canvas. This version fixes
+ * the multi-stroke drawing bug and correctly shows the controls.
  */
 
-// Module-level variables to hold canvas instance and history state.
+// Module-level variables
 let canvas;
 let history = [];
 let historyIndex = -1;
+let isActionInProgress = false; // Prevents re-triggering actions during undo/redo
 
-// Get references to UI elements this module controls.
+// DOM element references
 const undoBtn = document.getElementById('undo');
 const redoBtn = document.getElementById('redo');
-const submitBtnContainer = document.getElementById('submit-button-container');
+const controlsContainer = document.getElementById('controls-container');
 
 /**
- * Updates the enabled/disabled state of undo/redo buttons based on history.
+ * Updates the enabled/disabled state of undo/redo buttons.
  */
 const updateButtonStates = () => {
+    // Undo is possible if we are not at the very first state.
     undoBtn.disabled = historyIndex <= 0;
+    // Redo is possible if we are not at the most recent state.
     redoBtn.disabled = historyIndex >= history.length - 1;
 };
 
 /**
- * Saves the current canvas state to the history array for undo/redo functionality.
+ * Saves the current canvas state to the history array.
+ * This is the core of the undo/redo functionality.
  */
 const saveState = () => {
-    // If we have undone and then draw again, clear the 'future' redo history.
+    // If we have undone and then draw again, we must clear the 'future' history.
     if (historyIndex < history.length - 1) {
         history = history.slice(0, historyIndex + 1);
     }
-    // Add a deep copy of the canvas state.
-    history.push(JSON.parse(JSON.stringify(canvas.toDatalessJSON())));
+    history.push(canvas.toDatalessJSON());
     historyIndex++;
     updateButtonStates();
 };
 
 /**
+ * Loads a specific state from history onto the canvas.
+ * @param {number} index - The index of the history state to load.
+ */
+const loadState = (index) => {
+    isActionInProgress = true; // Set a flag to ignore events during this load
+    canvas.loadFromJSON(history[index], () => {
+        canvas.renderAll();
+        isActionInProgress = false; // Unset the flag once loading is complete
+    });
+    historyIndex = index;
+    updateButtonStates();
+};
+
+/**
  * Initializes the Fabric.js canvas.
- * @returns {fabric.Canvas} The initialized canvas instance.
  */
 export function initCanvas() {
     const canvasWrapper = document.getElementById('canvas-wrapper');
@@ -49,9 +65,8 @@ export function initCanvas() {
         backgroundColor: '#ffffff',
     });
 
-    // Configure the drawing brush.
-    canvas.freeDrawingBrush.color = '#1c1917'; // Near-black
-    canvas.freeDrawingBrush.width = 3;
+    canvas.freeDrawingBrush.color = '#1c1917';
+    canvas.freeDrawingBrush.width = 4; // Slightly thicker for better feel
 
     // Function to resize canvas to fit its container.
     const resizeCanvas = () => {
@@ -61,40 +76,38 @@ export function initCanvas() {
         canvas.renderAll();
     };
 
-    // Resize initially and on window resize.
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // Save the initial empty state for the first "undo".
+    // Save the initial empty state.
     saveState();
 
-    // When a user finishes drawing a path, save the state.
+    // --- EVENT LISTENERS ---
+
+    // When a user finishes drawing a path, save the new state.
     canvas.on('path:created', () => {
-        // Show the submit button on the very first stroke.
-        if (submitBtnContainer.classList.contains('hidden')) {
-            submitBtnContainer.classList.remove('hidden');
+        if (isActionInProgress) return; // Ignore if an undo/redo is happening
+        
+        // On the very first stroke, make the controls visible.
+        if (!controlsContainer.classList.contains('visible')) {
+            controlsContainer.classList.add('visible');
         }
         saveState();
     });
 
-    // Setup Undo/Redo button listeners.
+    // Undo Button Click
     undoBtn.addEventListener('click', () => {
         if (historyIndex > 0) {
-            historyIndex--;
-            canvas.loadFromJSON(history[historyIndex], canvas.renderAll.bind(canvas));
-            updateButtonStates();
+            loadState(historyIndex - 1);
         }
     });
 
+    // Redo Button Click
     redoBtn.addEventListener('click', () => {
         if (historyIndex < history.length - 1) {
-            historyIndex++;
-            canvas.loadFromJSON(history[historyIndex], canvas.renderAll.bind(canvas));
-            updateButtonStates();
+            loadState(historyIndex + 1);
         }
     });
-
-    return canvas;
 }
 
 /**
@@ -102,10 +115,7 @@ export function initCanvas() {
  * @returns {string|null} SVG string or null if canvas is empty.
  */
 export function getCanvasAsSVG() {
-    if (canvas.getObjects().length === 0) {
-        return null;
-    }
-    return canvas.toSVG();
+    return canvas.getObjects().length > 0 ? canvas.toSVG() : null;
 }
 
 /**
@@ -113,9 +123,9 @@ export function getCanvasAsSVG() {
  */
 export function clearCanvas() {
     canvas.clear();
-    canvas.backgroundColor = '#ffffff'; // Re-apply background after clear
+    canvas.backgroundColor = '#ffffff';
     history = [];
     historyIndex = -1;
     saveState(); // Save the cleared state as the new initial state
-    submitBtnContainer.classList.add('hidden'); // Hide submit button again
+    controlsContainer.classList.remove('visible'); // Hide controls again
 }
