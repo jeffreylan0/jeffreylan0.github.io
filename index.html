@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>shape</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fabric.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <!-- Your Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-stone-100 text-stone-800 flex flex-col h-screen overflow-hidden">
+
+    <!-- Website Title -->
+    <header class="text-center py-4">
+        <h1 class="text-2xl font-light tracking-widest">shape</h1>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow flex flex-col items-center justify-center p-4 pb-24 relative">
+        <div id="canvas-wrapper" class="w-full max-w-4xl h-full bg-white rounded-lg shadow-sm border border-stone-200 overflow-hidden">
+            <canvas id="drawing-canvas"></canvas>
+        </div>
+        <div class="flex items-center space-x-3 mt-4">
+            <button id="undo" class="control-button">Undo</button>
+            <button id="redo" class="control-button">Redo</button>
+            <button id="clear" class="control-button text-red-600 hover:bg-red-50">Clear</button>
+        </div>
+    </main>
+
+    <!-- Submit Button -->
+    <div id="submit-button-container" class="fixed-button-container hidden">
+        <button id="submit" class="submit-arrow-button">
+            <svg class="w-8 h-8 text-stone-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        </button>
+    </div>
+    
+    <!-- MODALS CONTAINER -->
+    <!-- Clear Confirmation Modal -->
+    <div id="confirm-clear-modal" class="modal-backdrop hidden">
+        <div class="modal-content">
+            <h3 class="modal-title">Clear Canvas?</h3>
+            <p class="modal-text">This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button id="cancel-clear-btn" class="modal-button-secondary">Cancel</button>
+                <button id="confirm-clear-btn" class="modal-button-danger">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shape Lookup Result Modal -->
+    <div id="lookup-result-modal" class="modal-backdrop hidden">
+        <div class="modal-content">
+            <h3 class="modal-title" id="lookup-title">Shape Found</h3>
+            <div id="lookup-body" class="my-4">
+                <!-- Content is dynamically inserted here by ui.js -->
+            </div>
+            <div class="modal-actions" id="lookup-actions">
+                <!-- Buttons are dynamically inserted here by ui.js -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Load JavaScript modules -->
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
