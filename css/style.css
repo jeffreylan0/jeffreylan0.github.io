@@ -1,5 +1,10 @@
+html, body {
+    overflow: hidden; /* Prevents all scrolling on the page */
+}
+
 body {
     font-family: 'Inter', sans-serif;
+    height: 100vh; /* Ensure body takes full viewport height */
 }
 
 /* Canvas container setup */
@@ -13,20 +18,22 @@ canvas {
     height: 100%;
 }
 
-/* New Control Bar Styles */
+/* Control Bar Styles */
 .control-bar {
-    @apply absolute top-8 left-1/2 -translate-x-1/2; /* Positioning */
+    @apply absolute top-4 left-1/2 -translate-x-1/2; /* Positioning inside canvas wrapper */
     @apply z-10 flex items-center justify-center space-x-2; /* Layout */
     @apply bg-stone-100 p-2 rounded-full; /* Pill shape and background */
     @apply shadow-md border border-stone-200; /* Styling */
     opacity: 0; /* Initially hidden */
     transform: translateY(-20px);
     transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    pointer-events: none; /* Prevent interaction when hidden */
 }
 
 .control-bar.visible {
     opacity: 1;
     transform: translateY(0);
+    pointer-events: auto; /* Allow interaction when visible */
 }
 
 .control-button {
@@ -44,31 +51,21 @@ canvas {
     @apply w-px h-6 bg-stone-300 mx-1;
 }
 
-/* Modal Styles */
+/* Modal Styles (Unchanged but included for completeness) */
 .modal-backdrop {
     @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4;
     @apply transition-opacity duration-300;
 }
-
-.modal-content {
-    @apply bg-white rounded-lg shadow-xl p-6 w-full max-w-sm text-center;
+.modal-content, .modal-content-large {
+    @apply bg-white rounded-lg shadow-xl p-6 w-full text-center;
     @apply transition-transform duration-300 scale-95;
 }
-
-.modal-backdrop:not(.hidden) .modal-content {
-    @apply scale-100;
-}
-
-/* New Large Modal for Shape Display */
-.modal-content-large {
-    @apply bg-white rounded-lg shadow-xl p-6 w-full max-w-md text-center;
-    @apply transition-transform duration-300 scale-95;
-}
-
+.modal-content { @apply max-w-sm; }
+.modal-content-large { @apply max-w-md; }
+.modal-backdrop:not(.hidden) .modal-content,
 .modal-backdrop:not(.hidden) .modal-content-large {
     @apply scale-100;
 }
-
 .modal-title { @apply text-lg font-medium mb-2; }
 .modal-text { @apply text-stone-600 mb-6; }
 .modal-actions { @apply flex justify-center space-x-4; }
