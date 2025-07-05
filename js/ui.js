@@ -1,12 +1,13 @@
 /**
  * File: /js/ui.js
  * Description: Manages showing, hiding, and dynamically updating UI elements,
- * primarily the modals.
+ * primarily the modals. This version renders matched shapes in a canvas.
  */
 
 // Get references to the modal elements.
 const confirmClearModal = document.getElementById('confirm-clear-modal');
 const lookupResultModal = document.getElementById('lookup-result-modal');
+let thumbnailCanvas = null; // To hold the Fabric instance for the modal's canvas
 
 /**
  * Hides all modals on the page.
@@ -24,9 +25,21 @@ export function hideAllModals() {
 export function showClearConfirmModal(onConfirm, onCancel) {
     hideAllModals();
     confirmClearModal.classList.remove('hidden');
-    // Assign the callback functions to the button clicks.
     document.getElementById('confirm-clear-btn').onclick = onConfirm;
     document.getElementById('cancel-clear-btn').onclick = onCancel;
+}
+
+/**
+ * Initializes the small canvas inside the result modal.
+ */
+function initThumbnailCanvas() {
+    if (thumbnailCanvas) {
+        thumbnailCanvas.dispose(); // Clean up previous instance
+    }
+    thumbnailCanvas = new fabric.Canvas('thumbnail-canvas', {
+        interactive: false, // Make it non-drawable, just for viewing
+        backgroundColor: '#f5f5f4', // stone-100
+    });
 }
 
 /**
@@ -35,75 +48,59 @@ export function showClearConfirmModal(onConfirm, onCancel) {
  */
 export function showLookupResultModal(result) {
     hideAllModals();
-    const titleEl = document.getElementById('lookup-title');
-    const bodyEl = document.getElementById('lookup-body');
-    const actionsEl = document.getElementById('lookup-actions');
+    
+    // Get modal elements
+    const modalBody = document.getElementById('lookup-body');
+    const modalActions = document.getElementById('lookup-actions');
 
-    // Clear previous dynamic content.
-    bodyEl.innerHTML = '';
-    actionsEl.innerHTML = '';
+    // Clear previous dynamic content
+    modalBody.innerHTML = `<div class="w-full h-64 bg-stone-50 rounded-md border border-stone-200"><canvas id="thumbnail-canvas"></canvas></div>`;
+    modalActions.innerHTML = '';
 
     // --- Render modal content based on API response ---
     if (result.isLoading) {
-        titleEl.textContent = 'Searching...';
-        bodyEl.innerHTML = `<p class="modal-text">Comparing your drawing to registered shapes...</p>`;
-    } else if (result.error) {
-        titleEl.textContent = 'Error';
-        bodyEl.innerHTML = `<p class="modal-text text-red-500">${result.error}</p>`;
-        actionsEl.innerHTML = `<button id="retry-btn" class="modal-button-secondary">Close</button>`;
-    } else if (!result.match_found) {
-        titleEl.textContent = 'Unique Shape!';
-        bodyEl.innerHTML = `<p class="modal-text">This shape hasn't been registered yet. You could be the first!</p>`;
-        actionsEl.innerHTML = `
-            <button id="retry-btn" class="modal-button-secondary">Retry</button>
-            <button class="modal-button-primary">Register</button>
-        `;
+        modalBody.innerHTML = `<div class="w-full h-64 flex items-center justify-center text-stone-500">Searching...</div>`;
+    } else if (result.error || !result.match_found) {
+        const message = result.error ? result.error : "This shape hasn't been registered yet.";
+        modalBody.innerHTML = `<div class="w-full h-64 flex items-center justify-center text-center p-4">${message}</div>`;
+        modalActions.innerHTML = `<button id="retry-btn" class="modal-button-secondary w-32">Retry</button>`;
     } else { // Match was found
+        // Initialize the canvas inside the modal
+        initThumbnailCanvas();
         const { shape } = result;
-        titleEl.textContent = 'Shape Found';
-        bodyEl.innerHTML = `
-            <p class="modal-text">Your drawing matches this registered shape:</p>
-            <div class="thumbnail-preview">${shape.thumbnail_svg}</div>
-        `;
 
-        if (shape.is_locked) {
-            bodyEl.innerHTML += `<p class="modal-text mt-4 font-semibold text-orange-600">This shape is temporarily locked by its owner.</p>`;
-            actionsEl.innerHTML = `<button id="retry-btn" class="modal-button-secondary">Retry</button>`;
-        } else if (shape.is_password_protected) {
-            bodyEl.innerHTML += `
-                <div class="mt-4">
-                    <label for="shape-password" class="block text-sm font-medium text-stone-700 text-left">This shape is password protected.</label>
-                    <input type="password" id="shape-password" class="password-input mt-1" placeholder="Enter password">
-                </div>
-            `;
-            actionsEl.innerHTML = `
-                <button id="retry-btn" class="modal-button-secondary">Retry</button>
-                <button id="unlock-btn" class="modal-button-primary">Unlock</button>
-            `;
-        } else {
-            actionsEl.innerHTML = `
-                <button id="retry-btn" class="modal-button-secondary">Retry</button>
-                <button id="open-btn" class="modal-button-primary">Open</button>
-            `;
+        // Load the matched SVG into the thumbnail canvas
+        fabric.loadSVGFromString(shape.thumbnail_svg, (objects, options) => {
+            const obj = fabric.util.groupSVGElements(objects, options);
+            obj.scaleToWidth(thumbnailCanvas.width * 0.8); // Scale to fit with padding
+            obj.scaleToHeight(thumbnailCanvas.height * 0.8);
+            thumbnailCanvas.centerObject(obj);
+            thumbnailCanvas.add(obj);
+            thumbnailCanvas.renderAll();
+        });
+
+        // Set up buttons
+        modalActions.innerHTML = `
+            <button id="retry-btn" class="modal-button-secondary w-32">Retry</button>
+            <button id="open-btn" class="modal-button-primary w-32">Open</button>
+        `;
+        
+        // Add logic for the "Open" button
+        const openBtn = modalActions.querySelector('#open-btn');
+        if(openBtn) {
+            openBtn.onclick = () => {
+                console.log(`Redirecting to view shape with ID: ${result.shape.id}`);
+                // window.location.href = `/view-shape?id=${result.shape.id}`;
+            };
         }
     }
 
-    // Add event listener for the retry button, which is almost always present.
-    const retryBtn = actionsEl.querySelector('#retry-btn');
+    // Add event listener for the retry button
+    const retryBtn = modalActions.querySelector('#retry-btn');
     if (retryBtn) {
         retryBtn.onclick = hideAllModals;
     }
     
-    // Add logic for the "Open" button if it exists.
-    const openBtn = actionsEl.querySelector('#open-btn');
-    if(openBtn) {
-        openBtn.onclick = () => {
-            // In a real app, this would redirect to the shape's public page.
-            console.log(`Redirecting to view shape with ID: ${result.shape.id}`);
-            // window.location.href = `/view-shape?id=${result.shape.id}`;
-        };
-    }
-
-    // Show the fully constructed modal.
+    // Show the fully constructed modal
     lookupResultModal.classList.remove('hidden');
 }
