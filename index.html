@@ -15,16 +15,16 @@
 </head>
 <body class="bg-stone-100 flex flex-col items-center justify-center h-screen overflow-hidden">
 
-    <!-- Website Title -->
-    <h1 class="text-stone-500 text-lg font-light py-4 absolute top-0">shape</h1>
+    <!-- Website Title: Highest z-index -->
+    <h1 class="text-stone-500 text-lg font-light py-4 absolute top-0 z-30">shape</h1>
 
     <!-- Main container for the canvas and its UI elements -->
-    <div id="canvas-container" class="relative w-full h-full max-w-4xl max-h-[80vh] md:max-h-[70vh] flex items-center justify-center p-4">
-        <!-- The pure white canvas with a subtle shadow -->
-        <canvas id="drawing-canvas" class="bg-white rounded-lg shadow-sm w-full h-full"></canvas>
+    <div id="canvas-container" class="relative w-full h-full max-w-4xl max-h-[95vh] md:max-h-[90vh] flex items-center justify-center p-2">
+        <!-- The pure white canvas, no shadow -->
+        <canvas id="drawing-canvas" class="bg-white rounded-lg w-full h-full"></canvas>
 
         <!-- Toolbar that appears after the first stroke -->
-        <div id="toolbar" class="absolute top-4 bg-stone-100/80 backdrop-blur-sm rounded-full shadow-md p-2 flex items-center justify-center gap-x-2 transform -translate-y-20 opacity-0">
+        <div id="toolbar" class="absolute top-4 bg-stone-100/80 backdrop-blur-sm rounded-full shadow-md p-2 flex items-center justify-center gap-x-2 transform -translate-y-20 z-10">
             <!-- Undo Button -->
             <button id="undo-btn" class="w-10 h-10 md:w-12 md:h-12 bg-stone-700 rounded-full flex items-center justify-center text-white hover:bg-stone-600 active:scale-95 transition-all disabled:bg-stone-400 disabled:cursor-not-allowed">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -52,7 +52,7 @@
         </div>
 
         <!-- Custom Confirmation Modal for Clearing Canvas -->
-        <div id="confirm-modal" class="absolute inset-0 bg-black/30 flex items-center justify-center hidden">
+        <div id="confirm-modal" class="absolute inset-0 bg-black/30 flex items-center justify-center hidden z-20">
             <div class="bg-white rounded-lg shadow-xl p-6 w-80 text-center">
                 <p class="text-lg font-medium text-stone-800 mb-4">Clear canvas?</p>
                 <p class="text-sm text-stone-500 mb-6">This action cannot be undone.</p>
