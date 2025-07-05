@@ -1,0 +1,73 @@
+/* This file contains custom styles that supplement Tailwind CSS.
+*/
+
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Ensure the Fabric.js container and canvas fill their wrapper */
+.canvas-container {
+    width: 100% !important;
+    height: 100% !important;
+}
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Base styles for drawing controls, using Tailwind's @apply for consistency */
+/* Note: In a real project with a build step, you'd use @apply. Here, we define the classes directly in the HTML. */
+/* This file is for styles that are harder to do with utility classes. */
+.control-button {
+    @apply px-4 py-2 bg-white border border-stone-200 rounded-md shadow-sm hover:bg-stone-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors;
+}
+
+.fixed-button-container {
+    @apply fixed bottom-6 left-1/2 -translate-x-1/2 transition-all duration-500 ease-in-out;
+}
+.fixed-button-container.hidden {
+    @apply transform translate-y-[150%] opacity-0;
+}
+
+.submit-arrow-button {
+    @apply w-16 h-16 bg-stone-800 rounded-full flex items-center justify-center shadow-lg hover:bg-stone-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-500;
+}
+
+/* Modal Styles */
+.modal-backdrop {
+    @apply fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4;
+}
+.modal-content {
+    @apply bg-white rounded-lg shadow-xl p-6 w-full max-w-sm text-center;
+}
+.modal-title {
+    @apply text-lg font-medium mb-2;
+}
+.modal-text {
+    @apply text-stone-600 mb-6;
+}
+.modal-actions {
+    @apply flex justify-center space-x-4;
+}
+.modal-button-primary {
+    @apply px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors;
+}
+.modal-button-secondary {
+    @apply px-6 py-2 bg-stone-200 rounded-md hover:bg-stone-300 transition-colors;
+}
+.modal-button-danger {
+    @apply px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors;
+}
+.password-input {
+    @apply block w-full px-3 py-2 border border-stone-300 rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm;
+}
+.thumbnail-preview {
+    @apply w-32 h-32 mx-auto border border-stone-200 rounded-md p-2 bg-stone-50 flex items-center justify-center;
+}
+.thumbnail-preview svg {
+    max-width: 100%;
+    max-height: 100%;
+    height: auto;
+    width: auto;
+}
