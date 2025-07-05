@@ -1,13 +1,14 @@
 /**
  * File: /js/canvas.js
- * Description: A completely rewritten and robust module for managing the Fabric.js canvas.
- * FIX 2 & 3: This version correctly handles multi-stroke drawing and the appearance of the controls.
+ * Description: A robust module for managing the Fabric.js canvas.
+ * This version triggers the controls animation on the first mouse-down event.
  */
 
 // Module-level variables
 let canvas;
 let history = [];
 let historyIndex = -1;
+let isFirstStroke = true; // Flag to track if the user has started drawing yet
 
 // DOM element references
 const undoBtn = document.getElementById('undo');
@@ -23,14 +24,13 @@ const updateButtonStates = () => {
 };
 
 /**
- * Saves the current canvas state. This is the core of the undo/redo logic.
+ * Saves the current canvas state for undo/redo.
  */
 const saveState = () => {
-    // If we have undone, and then draw again, we must clear the 'future' redo history.
     if (historyIndex < history.length - 1) {
         history = history.slice(0, historyIndex + 1);
     }
-    history.push(canvas.toJSON()); // Use toJSON for a complete state snapshot
+    history.push(canvas.toJSON());
     historyIndex++;
     updateButtonStates();
 };
@@ -65,13 +65,17 @@ export function initCanvas() {
 
     // --- EVENT LISTENERS ---
 
+    // This event fires as soon as the user presses their mouse/finger down.
+    canvas.on('mouse:down', () => {
+        // If it's the very first stroke, show the controls.
+        if (isFirstStroke) {
+            controlsContainer.classList.add('visible');
+            isFirstStroke = false; // Ensure this only happens once
+        }
+    });
+
     // This event fires *after* a drawing stroke is completed.
     canvas.on('path:created', () => {
-        // On the very first stroke (when history has only the initial empty state), show the controls.
-        if (history.length === 1) {
-            controlsContainer.classList.add('visible');
-        }
-        // Save the new state of the canvas after the stroke is added.
         saveState();
     });
 
@@ -80,7 +84,6 @@ export function initCanvas() {
             historyIndex--;
             canvas.loadFromJSON(history[historyIndex], () => {
                 canvas.renderAll();
-                // We must re-enable drawing mode after loading a state.
                 canvas.isDrawingMode = true;
             });
             updateButtonStates();
@@ -101,20 +104,22 @@ export function initCanvas() {
 
 /**
  * Exports the canvas content as an SVG string.
- * @returns {string|null} SVG string or null if canvas is empty.
  */
 export function getCanvasAsSVG() {
     return canvas.getObjects().length > 0 ? canvas.toSVG() : null;
 }
 
 /**
- * Clears the canvas and resets the history.
+ * Clears the canvas and resets the entire state.
  */
 export function clearCanvas() {
     canvas.clear();
     canvas.backgroundColor = '#ffffff';
     history = [];
     historyIndex = -1;
-    saveState(); // Save the cleared state as the new initial state
-    controlsContainer.classList.remove('visible'); // Hide controls again
+    saveState();
+    
+    // Hide the controls and reset the first-stroke flag
+    controlsContainer.classList.remove('visible');
+    isFirstStroke = true;
 }
