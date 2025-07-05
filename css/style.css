@@ -1,11 +1,8 @@
-/* This file contains custom styles that supplement Tailwind CSS.
-*/
-
 body {
     font-family: 'Inter', sans-serif;
 }
 
-/* Ensure the Fabric.js container and canvas fill their wrapper */
+/* Canvas container setup */
 .canvas-container {
     width: 100% !important;
     height: 100% !important;
@@ -16,58 +13,65 @@ canvas {
     height: 100%;
 }
 
-/* Base styles for drawing controls, using Tailwind's @apply for consistency */
-/* Note: In a real project with a build step, you'd use @apply. Here, we define the classes directly in the HTML. */
-/* This file is for styles that are harder to do with utility classes. */
+/* New Control Bar Styles */
+.control-bar {
+    @apply absolute top-8 left-1/2 -translate-x-1/2; /* Positioning */
+    @apply z-10 flex items-center justify-center space-x-2; /* Layout */
+    @apply bg-stone-100 p-2 rounded-full; /* Pill shape and background */
+    @apply shadow-md border border-stone-200; /* Styling */
+    opacity: 0; /* Initially hidden */
+    transform: translateY(-20px);
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.control-bar.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 .control-button {
-    @apply px-4 py-2 bg-white border border-stone-200 rounded-md shadow-sm hover:bg-stone-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors;
+    @apply w-10 h-10 flex items-center justify-center; /* Size */
+    @apply bg-stone-700 text-stone-200 rounded-full; /* Colors */
+    @apply transition-all duration-200 ease-in-out; /* Animation */
+    @apply hover:bg-stone-900 disabled:bg-stone-400 disabled:cursor-not-allowed;
 }
 
-.fixed-button-container {
-    @apply fixed bottom-6 left-1/2 -translate-x-1/2 transition-all duration-500 ease-in-out;
-}
-.fixed-button-container.hidden {
-    @apply transform translate-y-[150%] opacity-0;
+.control-button.submit-button {
+    @apply bg-blue-600 hover:bg-blue-700;
 }
 
-.submit-arrow-button {
-    @apply w-16 h-16 bg-stone-800 rounded-full flex items-center justify-center shadow-lg hover:bg-stone-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-500;
+.control-divider {
+    @apply w-px h-6 bg-stone-300 mx-1;
 }
 
 /* Modal Styles */
 .modal-backdrop {
-    @apply fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4;
+    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4;
+    @apply transition-opacity duration-300;
 }
+
 .modal-content {
     @apply bg-white rounded-lg shadow-xl p-6 w-full max-w-sm text-center;
+    @apply transition-transform duration-300 scale-95;
 }
-.modal-title {
-    @apply text-lg font-medium mb-2;
+
+.modal-backdrop:not(.hidden) .modal-content {
+    @apply scale-100;
 }
-.modal-text {
-    @apply text-stone-600 mb-6;
+
+/* New Large Modal for Shape Display */
+.modal-content-large {
+    @apply bg-white rounded-lg shadow-xl p-6 w-full max-w-md text-center;
+    @apply transition-transform duration-300 scale-95;
 }
-.modal-actions {
-    @apply flex justify-center space-x-4;
+
+.modal-backdrop:not(.hidden) .modal-content-large {
+    @apply scale-100;
 }
-.modal-button-primary {
-    @apply px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors;
-}
-.modal-button-secondary {
-    @apply px-6 py-2 bg-stone-200 rounded-md hover:bg-stone-300 transition-colors;
-}
-.modal-button-danger {
-    @apply px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors;
-}
-.password-input {
-    @apply block w-full px-3 py-2 border border-stone-300 rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm;
-}
-.thumbnail-preview {
-    @apply w-32 h-32 mx-auto border border-stone-200 rounded-md p-2 bg-stone-50 flex items-center justify-center;
-}
-.thumbnail-preview svg {
-    max-width: 100%;
-    max-height: 100%;
-    height: auto;
-    width: auto;
-}
+
+.modal-title { @apply text-lg font-medium mb-2; }
+.modal-text { @apply text-stone-600 mb-6; }
+.modal-actions { @apply flex justify-center space-x-4; }
+.modal-button-primary { @apply px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors; }
+.modal-button-secondary { @apply px-6 py-2 bg-stone-200 rounded-md hover:bg-stone-300 transition-colors; }
+.modal-button-danger { @apply px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors; }
