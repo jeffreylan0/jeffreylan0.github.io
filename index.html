@@ -22,52 +22,65 @@
 <body class="bg-stone-100 text-stone-800 flex flex-col h-screen overflow-hidden">
 
     <!-- Website Title -->
-    <header class="text-center py-4">
-        <h1 class="text-2xl font-light tracking-widest">shape</h1>
+    <header class="text-center py-2 text-stone-500">
+        <h1 class="text-xl font-light tracking-widest">shape</h1>
     </header>
 
-    <!-- Main Content Area -->
-    <main class="flex-grow flex flex-col items-center justify-center p-4 pb-24 relative">
-        <div id="canvas-wrapper" class="w-full max-w-4xl h-full bg-white rounded-lg shadow-sm border border-stone-200 overflow-hidden">
+    <!-- Main Content Area - This now acts as the positioning container -->
+    <main class="flex-grow flex flex-col items-center justify-center p-4 relative">
+        
+        <!-- Pill-shaped Control Bar -->
+        <div id="controls-container" class="control-bar">
+            <button id="undo" class="control-button" title="Undo">
+                <!-- Embedded SVG Icon for Undo -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+            </button>
+            <button id="redo" class="control-button" title="Redo">
+                <!-- Embedded SVG Icon for Redo -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 0 9-9 9 9 0 0 0 6 2.3l3-2.3"/></svg>
+            </button>
+            <button id="clear" class="control-button" title="Clear Canvas">
+                <!-- Embedded SVG Icon for Clear -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 2.5v.01M21.5 21.5v.01M2.5 21.5v.01M21.5 2.5v.01M12 2.5v.01M12 21.5v.01M2.5 12v.01M21.5 12v.01M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4z"/></svg>
+            </button>
+            <div class="control-divider"></div>
+            <button id="submit" class="control-button submit-button" title="Submit Drawing">
+                <!-- Embedded SVG Icon for Submit -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+        </div>
+
+        <!-- Canvas Wrapper - Takes up all available space -->
+        <div id="canvas-wrapper" class="w-full h-full bg-white rounded-lg shadow-sm border border-stone-200 overflow-hidden">
             <canvas id="drawing-canvas"></canvas>
         </div>
-        <div class="flex items-center space-x-3 mt-4">
-            <button id="undo" class="control-button">Undo</button>
-            <button id="redo" class="control-button">Redo</button>
-            <button id="clear" class="control-button text-red-600 hover:bg-red-50">Clear</button>
-        </div>
     </main>
-
-    <!-- Submit Button -->
-    <div id="submit-button-container" class="fixed-button-container hidden">
-        <button id="submit" class="submit-arrow-button">
-            <svg class="w-8 h-8 text-stone-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-        </button>
-    </div>
     
     <!-- MODALS CONTAINER -->
-    <!-- Clear Confirmation Modal -->
-    <div id="confirm-clear-modal" class="modal-backdrop hidden">
-        <div class="modal-content">
-            <h3 class="modal-title">Clear Canvas?</h3>
-            <p class="modal-text">This action cannot be undone.</p>
-            <div class="modal-actions">
-                <button id="cancel-clear-btn" class="modal-button-secondary">Cancel</button>
-                <button id="confirm-clear-btn" class="modal-button-danger">Confirm</button>
+    <div id="lookup-result-modal" class="modal-backdrop hidden">
+        <div class="modal-content-large">
+            <div id="lookup-body" class="w-full">
+                <!-- The matched shape will be rendered in this canvas -->
+                <div class="w-full h-64 bg-stone-50 rounded-md border border-stone-200">
+                    <canvas id="thumbnail-canvas"></canvas>
+                </div>
+            </div>
+            <div id="lookup-actions" class="mt-6 flex justify-center space-x-4">
+                <button id="retry-btn" class="modal-button-secondary w-32">Retry</button>
+                <button id="open-btn" class="modal-button-primary w-32">Open</button>
             </div>
         </div>
     </div>
 
-    <!-- Shape Lookup Result Modal -->
-    <div id="lookup-result-modal" class="modal-backdrop hidden">
+    <!-- Clear Confirmation Modal (remains the same) -->
+    <div id="confirm-clear-modal" class="modal-backdrop hidden">
         <div class="modal-content">
-            <h3 class="modal-title" id="lookup-title">Shape Found</h3>
-            <div id="lookup-body" class="my-4">
-                <!-- Content is dynamically inserted here by ui.js -->
-            </div>
-            <div class="modal-actions" id="lookup-actions">
-                <!-- Buttons are dynamically inserted here by ui.js -->
-            </div>
+             <h3 class="modal-title">Clear Canvas?</h3>
+             <p class="modal-text">This action cannot be undone.</p>
+             <div class="modal-actions">
+                 <button id="cancel-clear-btn" class="modal-button-secondary">Cancel</button>
+                 <button id="confirm-clear-btn" class="modal-button-danger">Confirm</button>
+             </div>
         </div>
     </div>
 
