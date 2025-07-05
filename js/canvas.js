@@ -1,14 +1,13 @@
 /**
  * File: /js/canvas.js
- * Description: Manages all logic for the Fabric.js canvas. This version fixes
- * the multi-stroke drawing bug and correctly shows the controls.
+ * Description: A completely rewritten and robust module for managing the Fabric.js canvas.
+ * FIX 2 & 3: This version correctly handles multi-stroke drawing and the appearance of the controls.
  */
 
 // Module-level variables
 let canvas;
 let history = [];
 let historyIndex = -1;
-let isActionInProgress = false; // Prevents re-triggering actions during undo/redo
 
 // DOM element references
 const undoBtn = document.getElementById('undo');
@@ -19,42 +18,25 @@ const controlsContainer = document.getElementById('controls-container');
  * Updates the enabled/disabled state of undo/redo buttons.
  */
 const updateButtonStates = () => {
-    // Undo is possible if we are not at the very first state.
     undoBtn.disabled = historyIndex <= 0;
-    // Redo is possible if we are not at the most recent state.
     redoBtn.disabled = historyIndex >= history.length - 1;
 };
 
 /**
- * Saves the current canvas state to the history array.
- * This is the core of the undo/redo functionality.
+ * Saves the current canvas state. This is the core of the undo/redo logic.
  */
 const saveState = () => {
-    // If we have undone and then draw again, we must clear the 'future' history.
+    // If we have undone, and then draw again, we must clear the 'future' redo history.
     if (historyIndex < history.length - 1) {
         history = history.slice(0, historyIndex + 1);
     }
-    history.push(canvas.toDatalessJSON());
+    history.push(canvas.toJSON()); // Use toJSON for a complete state snapshot
     historyIndex++;
     updateButtonStates();
 };
 
 /**
- * Loads a specific state from history onto the canvas.
- * @param {number} index - The index of the history state to load.
- */
-const loadState = (index) => {
-    isActionInProgress = true; // Set a flag to ignore events during this load
-    canvas.loadFromJSON(history[index], () => {
-        canvas.renderAll();
-        isActionInProgress = false; // Unset the flag once loading is complete
-    });
-    historyIndex = index;
-    updateButtonStates();
-};
-
-/**
- * Initializes the Fabric.js canvas.
+ * Initializes the Fabric.js canvas and all its event listeners.
  */
 export function initCanvas() {
     const canvasWrapper = document.getElementById('canvas-wrapper');
@@ -66,9 +48,8 @@ export function initCanvas() {
     });
 
     canvas.freeDrawingBrush.color = '#1c1917';
-    canvas.freeDrawingBrush.width = 4; // Slightly thicker for better feel
+    canvas.freeDrawingBrush.width = 4;
 
-    // Function to resize canvas to fit its container.
     const resizeCanvas = () => {
         const { width, height } = canvasWrapper.getBoundingClientRect();
         canvas.setWidth(width);
@@ -84,28 +65,36 @@ export function initCanvas() {
 
     // --- EVENT LISTENERS ---
 
-    // When a user finishes drawing a path, save the new state.
+    // This event fires *after* a drawing stroke is completed.
     canvas.on('path:created', () => {
-        if (isActionInProgress) return; // Ignore if an undo/redo is happening
-        
-        // On the very first stroke, make the controls visible.
-        if (!controlsContainer.classList.contains('visible')) {
+        // On the very first stroke (when history has only the initial empty state), show the controls.
+        if (history.length === 1) {
             controlsContainer.classList.add('visible');
         }
+        // Save the new state of the canvas after the stroke is added.
         saveState();
     });
 
-    // Undo Button Click
     undoBtn.addEventListener('click', () => {
         if (historyIndex > 0) {
-            loadState(historyIndex - 1);
+            historyIndex--;
+            canvas.loadFromJSON(history[historyIndex], () => {
+                canvas.renderAll();
+                // We must re-enable drawing mode after loading a state.
+                canvas.isDrawingMode = true;
+            });
+            updateButtonStates();
         }
     });
 
-    // Redo Button Click
     redoBtn.addEventListener('click', () => {
         if (historyIndex < history.length - 1) {
-            loadState(historyIndex + 1);
+            historyIndex++;
+            canvas.loadFromJSON(history[historyIndex], () => {
+                canvas.renderAll();
+                canvas.isDrawingMode = true;
+            });
+            updateButtonStates();
         }
     });
 }
