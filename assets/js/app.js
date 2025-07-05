@@ -78,7 +78,7 @@ window.addEventListener('load', () => {
         // Show the toolbar if it's the first stroke (or first after a clear)
         if (!toolbarVisible && history.length > 0) {
             toolbarVisible = true;
-            toolbar.classList.remove('-translate-y-20');
+            toolbar.classList.remove('-translate-y-full');
         }
     }
 
@@ -135,7 +135,7 @@ window.addEventListener('load', () => {
 
         // Hide the toolbar when the canvas is cleared
         if (toolbarVisible) {
-            toolbar.classList.add('-translate-y-20');
+            toolbar.classList.add('-translate-y-full');
             toolbarVisible = false;
         }
     }
