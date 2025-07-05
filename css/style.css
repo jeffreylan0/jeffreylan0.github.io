@@ -1,10 +1,17 @@
-html, body {
-    overflow: hidden; /* Prevents all scrolling on the page */
+/* FIX 1: These rules prevent scrolling and zooming on the entire page, critical for a mobile-first app experience. */
+html {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
 }
 
 body {
     font-family: 'Inter', sans-serif;
-    height: 100vh; /* Ensure body takes full viewport height */
+    height: 100vh; /* Full viewport height */
+    width: 100vw;  /* Full viewport width */
+    overflow: hidden; /* Extra insurance against scrolling */
+    touch-action: none; /* Disables pinch-zoom and panning gestures on the body */
 }
 
 /* Canvas container setup */
@@ -20,26 +27,27 @@ canvas {
 
 /* Control Bar Styles */
 .control-bar {
-    @apply absolute top-4 left-1/2 -translate-x-1/2; /* Positioning inside canvas wrapper */
-    @apply z-10 flex items-center justify-center space-x-2; /* Layout */
-    @apply bg-stone-100 p-2 rounded-full; /* Pill shape and background */
-    @apply shadow-md border border-stone-200; /* Styling */
-    opacity: 0; /* Initially hidden */
-    transform: translateY(-20px);
+    @apply absolute top-4 left-1/2 -translate-x-1/2;
+    @apply z-10 flex items-center justify-center space-x-2;
+    @apply bg-stone-100 p-2 rounded-full;
+    @apply border border-stone-200;
+    /* FIX 3: Start hidden and slightly up, ready for the pop-down animation. */
+    opacity: 0;
+    transform: translateY(-20px) translateX(-50%);
     transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-    pointer-events: none; /* Prevent interaction when hidden */
+    pointer-events: none; /* Cannot be clicked when invisible */
 }
 
 .control-bar.visible {
     opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto; /* Allow interaction when visible */
+    transform: translateY(0) translateX(-50%); /* Animate to final position */
+    pointer-events: auto;
 }
 
 .control-button {
-    @apply w-10 h-10 flex items-center justify-center; /* Size */
-    @apply bg-stone-700 text-stone-200 rounded-full; /* Colors */
-    @apply transition-all duration-200 ease-in-out; /* Animation */
+    @apply w-10 h-10 flex items-center justify-center;
+    @apply bg-stone-700 text-stone-200 rounded-full;
+    @apply transition-all duration-200 ease-in-out;
     @apply hover:bg-stone-900 disabled:bg-stone-400 disabled:cursor-not-allowed;
 }
 
