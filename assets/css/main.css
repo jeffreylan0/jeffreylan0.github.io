@@ -1,0 +1,14 @@
+/* Use Inter font as the default */
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Custom styles for better touch interactions on the canvas */
+canvas {
+    touch-action: none;
+}
+
+/* Simple transition for the toolbar's appearance */
+#toolbar {
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
