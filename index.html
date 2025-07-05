@@ -2,13 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <!-- FIX 1: This viewport tag is critical for preventing zoom and scroll on mobile devices. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>shape</title>
     
-    <!-- Tailwind CSS -->
+    <!-- External Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Fabric.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     
     <!-- Google Fonts -->
@@ -19,36 +18,35 @@
     <!-- Your Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-stone-100 text-stone-800 flex flex-col h-screen">
+<body class="bg-stone-100 text-stone-800 flex flex-col">
 
-    <!-- Website Title -->
+    <!-- Header -->
     <header class="flex-shrink-0 text-center py-2 text-stone-500">
         <h1 class="text-xl font-light tracking-widest">shape</h1>
     </header>
 
-    <!-- Main Content Area - This now properly constrains the canvas -->
+    <!-- Main Content Area -->
     <main class="flex-grow flex flex-col items-center justify-center p-4 pt-0 relative min-h-0">
         
-        <!-- Canvas Wrapper - Takes up all available space within the padded main area -->
-        <div id="canvas-wrapper" class="w-full h-full bg-white rounded-lg shadow-sm border border-stone-200 overflow-hidden relative">
+        <!-- FIX 4: The 'shadow-sm' class has been removed from this wrapper. -->
+        <div id="canvas-wrapper" class="w-full h-full bg-white rounded-lg border border-stone-200 overflow-hidden relative">
             
-            <!-- Pill-shaped Control Bar - Now positioned inside the canvas wrapper -->
+            <!-- Control Bar: This will be made visible via JavaScript -->
             <div id="controls-container" class="control-bar">
                 <button id="undo" class="control-button" title="Undo">
-                    <!-- Embedded SVG Icon for Undo. Storing icons this way is efficient as it saves network requests. -->
+                    <!-- Vector Icon Storage: Icons are embedded as SVGs directly in the HTML. 
+                         This is the most efficient method for a small number of simple icons, 
+                         as it requires no extra file downloads. -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
                 </button>
                 <button id="redo" class="control-button" title="Redo">
-                    <!-- Embedded SVG Icon for Redo -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 0 9-9 9 9 0 0 0 6 2.3l3-2.3"/></svg>
                 </button>
                 <button id="clear" class="control-button" title="Clear Canvas">
-                    <!-- Embedded SVG Icon for Clear -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 2.5v.01M21.5 21.5v.01M2.5 21.5v.01M21.5 2.5v.01M12 2.5v.01M12 21.5v.01M2.5 12v.01M21.5 12v.01M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4z"/></svg>
                 </button>
                 <div class="control-divider"></div>
                 <button id="submit" class="control-button submit-button" title="Submit Drawing">
-                    <!-- Embedded SVG Icon for Submit -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                 </button>
             </div>
@@ -57,13 +55,11 @@
         </div>
     </main>
     
-    <!-- MODALS (No changes from previous version) -->
+    <!-- MODALS (No changes needed) -->
     <div id="lookup-result-modal" class="modal-backdrop hidden">
         <div class="modal-content-large">
             <div id="lookup-body" class="w-full">
-                <div class="w-full h-64 bg-stone-50 rounded-md border border-stone-200">
-                    <canvas id="thumbnail-canvas"></canvas>
-                </div>
+                <div class="w-full h-64 bg-stone-50 rounded-md border border-stone-200"><canvas id="thumbnail-canvas"></canvas></div>
             </div>
             <div id="lookup-actions" class="mt-6 flex justify-center space-x-4">
                 <button id="retry-btn" class="modal-button-secondary w-32">Retry</button>
@@ -82,7 +78,7 @@
         </div>
     </div>
 
-    <!-- Load JavaScript modules -->
+    <!-- JavaScript Modules -->
     <script type="module" src="js/main.js"></script>
 </body>
 </html>
