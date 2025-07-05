@@ -1,4 +1,4 @@
-/* FIX 1: These rules prevent scrolling and zooming on the entire page, critical for a mobile-first app experience. */
+/* Base layout and scroll prevention */
 html {
     position: fixed;
     height: 100%;
@@ -8,10 +8,10 @@ html {
 
 body {
     font-family: 'Inter', sans-serif;
-    height: 100vh; /* Full viewport height */
-    width: 100vw;  /* Full viewport width */
-    overflow: hidden; /* Extra insurance against scrolling */
-    touch-action: none; /* Disables pinch-zoom and panning gestures on the body */
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    touch-action: none;
 }
 
 /* Canvas container setup */
@@ -25,17 +25,18 @@ canvas {
     height: 100%;
 }
 
-/* Control Bar Styles */
+/* Control Bar: Off-white rectangle with rounded corners */
 .control-bar {
-    @apply absolute top-4 left-1/2 -translate-x-1/2;
-    @apply z-10 flex items-center justify-center space-x-2;
-    @apply bg-stone-100 p-2 rounded-full;
+    @apply absolute top-4 left-1/2; /* Position at top-center */
+    @apply z-10 flex items-center justify-center space-x-2; /* Flexbox layout */
+    @apply bg-stone-100 p-2 rounded-lg; /* Off-white, padded, rounded */
     @apply border border-stone-200;
-    /* FIX 3: Start hidden and slightly up, ready for the pop-down animation. */
+    
+    /* Animation: Start hidden and moved up, ready for pop-down */
     opacity: 0;
-    transform: translateY(-20px) translateX(-50%);
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-    pointer-events: none; /* Cannot be clicked when invisible */
+    transform: translateY(-150%) translateX(-50%); /* Move up and center */
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    pointer-events: none;
 }
 
 .control-bar.visible {
@@ -44,11 +45,13 @@ canvas {
     pointer-events: auto;
 }
 
+/* Control Buttons: Dark grey circles */
 .control-button {
-    @apply w-10 h-10 flex items-center justify-center;
-    @apply bg-stone-700 text-stone-200 rounded-full;
+    @apply w-11 h-11 flex items-center justify-center; /* Sizing */
+    @apply bg-stone-800 rounded-full; /* Dark grey circle */
+    @apply text-stone-100; /* Off-white icon color */
     @apply transition-all duration-200 ease-in-out;
-    @apply hover:bg-stone-900 disabled:bg-stone-400 disabled:cursor-not-allowed;
+    @apply hover:bg-stone-900 disabled:bg-stone-500 disabled:cursor-not-allowed;
 }
 
 .control-button.submit-button {
@@ -56,27 +59,17 @@ canvas {
 }
 
 .control-divider {
-    @apply w-px h-6 bg-stone-300 mx-1;
+    @apply w-px h-6 bg-stone-300;
 }
 
-/* Modal Styles (Unchanged but included for completeness) */
-.modal-backdrop {
-    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4;
-    @apply transition-opacity duration-300;
-}
-.modal-content, .modal-content-large {
-    @apply bg-white rounded-lg shadow-xl p-6 w-full text-center;
-    @apply transition-transform duration-300 scale-95;
-}
+/* Modal Styles (Unchanged) */
+.modal-backdrop { @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4; }
+.modal-content, .modal-content-large { @apply bg-white rounded-lg shadow-xl p-6 w-full text-center; }
 .modal-content { @apply max-w-sm; }
 .modal-content-large { @apply max-w-md; }
-.modal-backdrop:not(.hidden) .modal-content,
-.modal-backdrop:not(.hidden) .modal-content-large {
-    @apply scale-100;
-}
 .modal-title { @apply text-lg font-medium mb-2; }
 .modal-text { @apply text-stone-600 mb-6; }
 .modal-actions { @apply flex justify-center space-x-4; }
-.modal-button-primary { @apply px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors; }
-.modal-button-secondary { @apply px-6 py-2 bg-stone-200 rounded-md hover:bg-stone-300 transition-colors; }
-.modal-button-danger { @apply px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors; }
+.modal-button-primary { @apply px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700; }
+.modal-button-secondary { @apply px-6 py-2 bg-stone-200 rounded-md hover:bg-stone-300; }
+.modal-button-danger { @apply px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700; }
