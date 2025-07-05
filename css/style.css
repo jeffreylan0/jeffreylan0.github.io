@@ -29,7 +29,7 @@ canvas {
 .control-bar {
     @apply absolute top-4 left-1/2; /* Position at top-center */
     @apply z-10 flex items-center justify-center space-x-2; /* Flexbox layout */
-    @apply bg-stone-100 p-2 rounded-lg; /* Off-white, padded, rounded */
+    @apply bg-stone-100 p-2 rounded-lg; /* Off-white, padded, rounded corners */
     @apply border border-stone-200;
     
     /* Animation: Start hidden and moved up, ready for pop-down */
@@ -45,7 +45,7 @@ canvas {
     pointer-events: auto;
 }
 
-/* Control Buttons: Dark grey circles */
+/* Default Control Buttons: Dark grey circles with off-white icons */
 .control-button {
     @apply w-11 h-11 flex items-center justify-center; /* Sizing */
     @apply bg-stone-800 rounded-full; /* Dark grey circle */
@@ -54,8 +54,12 @@ canvas {
     @apply hover:bg-stone-900 disabled:bg-stone-500 disabled:cursor-not-allowed;
 }
 
+/* Submit Button Override: White circle with dark grey icon */
 .control-button.submit-button {
-    @apply bg-blue-600 hover:bg-blue-700;
+    @apply bg-white; /* Pure white circle */
+    @apply text-stone-800; /* Dark grey icon color */
+    @apply border border-stone-200; /* Subtle border */
+    @apply hover:bg-stone-200; /* Slightly darker on hover */
 }
 
 .control-divider {
