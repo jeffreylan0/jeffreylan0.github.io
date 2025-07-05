@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- FIX 1: This viewport tag is critical for preventing zoom and scroll on mobile devices. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>shape</title>
     
@@ -28,26 +27,27 @@
     <!-- Main Content Area -->
     <main class="flex-grow flex flex-col items-center justify-center p-4 pt-0 relative min-h-0">
         
-        <!-- FIX 4: The 'shadow-sm' class has been removed from this wrapper. -->
         <div id="canvas-wrapper" class="w-full h-full bg-white rounded-lg border border-stone-200 overflow-hidden relative">
             
-            <!-- Control Bar: This will be made visible via JavaScript -->
+            <!-- Control Bar: Off-white rectangle with rounded corners -->
             <div id="controls-container" class="control-bar">
+                <!-- Buttons: Dark grey circles with off-white vector icons -->
                 <button id="undo" class="control-button" title="Undo">
-                    <!-- Vector Icon Storage: Icons are embedded as SVGs directly in the HTML. 
-                         This is the most efficient method for a small number of simple icons, 
-                         as it requires no extra file downloads. -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+                    <!-- Google Material Design Icon: "undo" -->
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
                 </button>
                 <button id="redo" class="control-button" title="Redo">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 0 9-9 9 9 0 0 0 6 2.3l3-2.3"/></svg>
+                    <!-- Google Material Design Icon: "redo" -->
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.6 3.6z"/></svg>
                 </button>
                 <button id="clear" class="control-button" title="Clear Canvas">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 2.5v.01M21.5 21.5v.01M2.5 21.5v.01M21.5 2.5v.01M12 2.5v.01M12 21.5v.01M2.5 12v.01M21.5 12v.01M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4z"/></svg>
+                    <!-- Google Material Design Icon: "delete" -->
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg>
                 </button>
                 <div class="control-divider"></div>
                 <button id="submit" class="control-button submit-button" title="Submit Drawing">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    <!-- Google Material Design Icon: "arrow_forward" -->
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z"/></svg>
                 </button>
             </div>
 
@@ -55,26 +55,18 @@
         </div>
     </main>
     
-    <!-- MODALS (No changes needed) -->
+    <!-- MODALS (No changes needed from previous versions) -->
     <div id="lookup-result-modal" class="modal-backdrop hidden">
         <div class="modal-content-large">
-            <div id="lookup-body" class="w-full">
-                <div class="w-full h-64 bg-stone-50 rounded-md border border-stone-200"><canvas id="thumbnail-canvas"></canvas></div>
-            </div>
-            <div id="lookup-actions" class="mt-6 flex justify-center space-x-4">
-                <button id="retry-btn" class="modal-button-secondary w-32">Retry</button>
-                <button id="open-btn" class="modal-button-primary w-32">Open</button>
-            </div>
+            <div id="lookup-body" class="w-full"><div class="w-full h-64 bg-stone-50 rounded-md border border-stone-200"><canvas id="thumbnail-canvas"></canvas></div></div>
+            <div id="lookup-actions" class="mt-6 flex justify-center space-x-4"><button id="retry-btn" class="modal-button-secondary w-32">Retry</button><button id="open-btn" class="modal-button-primary w-32">Open</button></div>
         </div>
     </div>
     <div id="confirm-clear-modal" class="modal-backdrop hidden">
         <div class="modal-content">
              <h3 class="modal-title">Clear Canvas?</h3>
              <p class="modal-text">This action cannot be undone.</p>
-             <div class="modal-actions">
-                 <button id="cancel-clear-btn" class="modal-button-secondary">Cancel</button>
-                 <button id="confirm-clear-btn" class="modal-button-danger">Confirm</button>
-             </div>
+             <div class="modal-actions"><button id="cancel-clear-btn" class="modal-button-secondary">Cancel</button><button id="confirm-clear-btn" class="modal-button-danger">Confirm</button></div>
         </div>
     </div>
 
