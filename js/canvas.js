@@ -1,23 +1,24 @@
 /**
  * File: /js/canvas.js
- * Description: A completely overhauled and robust module for managing the Fabric.js canvas.
- * This version uses a self-removing event listener to guarantee the controls appear reliably on the first stroke.
+ * Description: A corrected and robust module for managing the Fabric.js canvas.
+ * This version uses a simple flag combined with corrected CSS to reliably reveal the controls.
  */
 
 // Module-level variables
 let canvas;
 let history = [];
 let historyIndex = -1;
+let hasUserDrawn = false; // Simple, reliable flag to track the first interaction.
 
-// --- Helper Functions ---
+// DOM element references
+const controlsContainer = document.getElementById('controls-container');
+const undoBtn = document.getElementById('undo');
+const redoBtn = document.getElementById('redo');
 
 /**
  * Updates the enabled/disabled state of undo/redo buttons.
  */
 const updateButtonStates = () => {
-    // Query for elements each time to be safe, though they should be constant.
-    const undoBtn = document.getElementById('undo');
-    const redoBtn = document.getElementById('redo');
     undoBtn.disabled = historyIndex <= 0;
     redoBtn.disabled = historyIndex >= history.length - 1;
 };
@@ -35,27 +36,11 @@ const saveState = () => {
 };
 
 /**
- * Defines the function that will run ONCE when the user first draws.
- * It makes the controls visible and then removes itself to prevent re-running.
- */
-const onFirstStroke = () => {
-    const controlsContainer = document.getElementById('controls-container');
-    controlsContainer.classList.add('visible');
-    
-    // IMPORTANT: Remove this specific listener so it never fires again for this session.
-    canvas.off('mouse:down', onFirstStroke);
-};
-
-// --- Exported Functions ---
-
-/**
  * Initializes the Fabric.js canvas and all its event listeners.
  */
 export function initCanvas() {
     const canvasWrapper = document.getElementById('canvas-wrapper');
     const canvasEl = document.getElementById('drawing-canvas');
-    const undoBtn = document.getElementById('undo');
-    const redoBtn = document.getElementById('redo');
 
     canvas = new fabric.Canvas(canvasEl, {
         isDrawingMode: true,
@@ -80,8 +65,14 @@ export function initCanvas() {
 
     // --- EVENT LISTENERS ---
 
-    // Attach the one-time listener for the first drawing action.
-    canvas.on('mouse:down', onFirstStroke);
+    // This event fires as soon as the user presses their mouse/finger down.
+    canvas.on('mouse:down', () => {
+        // If the user has not drawn yet, show the controls.
+        if (!hasUserDrawn) {
+            controlsContainer.classList.add('visible');
+            hasUserDrawn = true; // Set the flag to true so this only runs once per session.
+        }
+    });
 
     // This event fires *after* a drawing stroke is completed.
     canvas.on('path:created', () => {
@@ -119,21 +110,16 @@ export function getCanvasAsSVG() {
 }
 
 /**
- * Clears the canvas and resets the entire state, including the first-stroke trigger.
+ * Clears the canvas and resets the entire state.
  */
 export function clearCanvas() {
-    const controlsContainer = document.getElementById('controls-container');
-
     canvas.clear();
     canvas.backgroundColor = '#ffffff';
     history = [];
     historyIndex = -1;
     saveState();
     
-    // Hide the controls.
+    // Hide the controls and reset the flag for the next drawing session.
     controlsContainer.classList.remove('visible');
-    
-    // Re-attach the one-time listener for the next drawing session.
-    // This ensures that if a user clears the canvas, the animation will happen again on their next "first" stroke.
-    canvas.on('mouse:down', onFirstStroke);
+    hasUserDrawn = false;
 }
