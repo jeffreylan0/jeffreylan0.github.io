@@ -8,7 +8,7 @@ canvas {
     touch-action: none;
 }
 
-/* Simple transition for the toolbar's appearance */
+/* Simple transition for the toolbar's drop-down effect, no opacity fade */
 #toolbar {
-    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out;
 }
